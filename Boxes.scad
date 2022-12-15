@@ -17,21 +17,32 @@ sloping_body (width, depth, height_front, height_back, thickness, rounding,
   // tilt it and chop the bottom off
   theta = asin ((height_back - height_front) / depth);
   screw_hole_offset = thickness + 1.5 * screw_hole_dia - LAYER_HEIGHT;
+  d = depth;
+  dh = height_back - height_front;
+  l = sqrt (d * d + dh * dh);
 
   difference ()
   {
-    rotate ([ 0, theta, 0 ])
+    translate ([ 0, depth, 0 ]) rotate ([ theta, 0, 0 ])
+        translate ([ 0, -depth, 0 ])
     {
       difference ()
       {
         union ()
         {
           // build a rounded corner, rectangular box
-          rounded_core (width, depth, height_back, thickness, rounding);
+          difference ()
+          {
+            union() {
+                rounded_core (width, depth, height_back, thickness, rounding);
+                translate ([ 0, depth+0.1, 0 ]) rotate ([ 90, 0, 0 ]) children(1);
+            }
+            // back panel cutouts
+            translate ([ 0, depth+0.1, 0 ]) rotate ([ 90, 0, 0 ]) children(0);
+          }
           // add extrusions to hold screws
-          op_4_grid (width, depth,
-                        screw_hole_offset,screw_hole_offset,screw_hole_offset,screw_hole_offset)
-              difference ()
+          op_4_grid (width, depth, screw_hole_offset, screw_hole_offset,
+                     screw_hole_offset, screw_hole_offset) difference ()
           {
             cylinder (h = height_back - 2 * thickness, d = screw_hole_dia * 3);
             translate ([ 0, 0, -LAYER_HEIGHT ])
@@ -45,9 +56,7 @@ sloping_body (width, depth, height_front, height_back, thickness, rounding,
         // recess is half the wall thickness
         translate ([
           thickness / 2, thickness / 2, height_back - thickness - LAYER_HEIGHT
-        ]) 
-        rounded_core (width - thickness,
-                         depth - thickness,
+        ]) rounded_core (width - thickness, depth - thickness,
                          thickness + 2 * LAYER_HEIGHT, thickness, rounding);
       }
     }
@@ -56,16 +65,10 @@ sloping_body (width, depth, height_front, height_back, thickness, rounding,
         cube ([ width * 2, depth * 2, height_back ]);
 
     // create the lip on the bottom
-
   }
 
-    //rotate ([ 0, theta, 0 ])
-    translate ([thickness/2, thickness/2, 0]) 
-    color("RED") 
-    linear_extrude (height = thickness)
-    rounded_square (width - thickness,
-                    depth - thickness,
-                    rounding); 
+  color ("RED") linear_extrude (height = thickness)
+      rounded_square (width, d, rounding);
 }
 
 module
@@ -75,9 +78,9 @@ rounded_core (width, depth, height, thickness, rounding)
   linear_extrude (height = height) difference ()
   {
     rounded_square (width, depth, rounding);
-    translate ([ thickness, thickness, 0 ])
-        rounded_square (width - thickness * 2, depth - thickness * 2, rounding);
+    translate ([ thickness, thickness, 0 ]) rounded_square (
+        width - thickness * 2, depth - thickness * 2, rounding);
   }
 }
 
-//sloping_body (100, 150, 40, 60, 3, 5, 3);
+// sloping_body (150, 100, 40, 60, 3, 5, 3);

@@ -70,7 +70,14 @@ module i2c_navkey_snap(LAYER_HEIGHT=0.4) {
     
     translate([-i2c_navkey_pcb_side/2, -i2c_navkey_pcb_side/2, 0])
     part_snap_standoff(i2c_navkey_standoff_outer_height, i2c_navkey_standoff_outer_dia,
-        i2c_navkey_standoff_inner_height, i2c_navkey_standoff_hole_dia);
+        i2c_navkey_standoff_inner_height, i2c_navkey_standoff_inner_dia);
+}
+
+module i2c_navkey_melt_standoff(base_height, melt_height, LAYER_HEIGHT=0.4) {
+    
+    translate([-i2c_navkey_pcb_side/2, -i2c_navkey_pcb_side/2, 0])
+    part_melt_standoff(base_height, i2c_navkey_standoff_outer_dia,
+        melt_height, i2c_navkey_standoff_inner_dia, LAYER_HEIGHT);
 }
 
 
@@ -79,16 +86,16 @@ module i2c_navkey_flat_screw_standoffs(LAYER_HEIGHT=0.4) {
     t2 = i2c_navkey_pcb_side - t1;
 
         translate([t1, t1, 0])
-        i2c_navkey_standoff(LAYER_HEIGHT);
+        i2c_navkey_flat_screw_standoff(LAYER_HEIGHT);
         
         translate([t1, t2, 0])
-        i2c_navkey_standoff(LAYER_HEIGHT);
+        i2c_navkey_flat_screw_standoff(LAYER_HEIGHT);
         
         translate([t2, t2, 0])
-        i2c_navkey_standoff(LAYER_HEIGHT);
+        i2c_navkey_flat_screw_standoff(LAYER_HEIGHT);
         
         translate([t2, t1, 0])
-        i2c_navkey_standoff(LAYER_HEIGHT);
+        i2c_navkey_flat_screw_standoff(LAYER_HEIGHT);
 } 
 
 module i2c_navkey_snaps(LAYER_HEIGHT=0.4) {
@@ -108,4 +115,22 @@ module i2c_navkey_snaps(LAYER_HEIGHT=0.4) {
         translate([t2, t1, 0])
         i2c_navkey_snap(LAYER_HEIGHT);
  
+}  
+
+module i2c_navkey_melt_standoffs(base_height, melt_height, LAYER_HEIGHT=0.4) {
+    t1 = (i2c_navkey_pcb_side - i2c_navkey_mounting_hole_centres)/2;
+    t2 = i2c_navkey_pcb_side - t1;
+
+
+        translate([t1, t1, 0])
+        i2c_navkey_melt_standoff(base_height, melt_height, LAYER_HEIGHT);
+        
+        translate([t1, t2, 0])
+        i2c_navkey_melt_standoff(base_height, melt_height, LAYER_HEIGHT);
+        
+        translate([t2, t2, 0])
+        i2c_navkey_melt_standoff(base_height, melt_height, LAYER_HEIGHT);
+        
+        translate([t2, t1, 0])
+        i2c_navkey_melt_standoff(base_height, melt_height, LAYER_HEIGHT);
 }  
