@@ -7,7 +7,17 @@ LEFT = 2;
 RIGHT = 3;
 FRONT = 4;
 BACK = 5;
-module rounded_square(length, width, radius) {
+NW = 0;
+NE = 1;
+SW = 2;
+SE = 3;
+
+function north_west() = NW;
+function north_east() = NE;
+function south_west() = SW;
+function south_east() = SE;
+
+module uk_rounded_rectangle(length, width, radius) {
     
     translate([radius, radius, 0])
     hull() {
@@ -140,6 +150,40 @@ module speaker_grille_square(speaker_dia, hole_thickness, LAYER_HEIGHT = 0.15) {
     }
 }
 
+module rounded_cube(w,l,h,r=2,centre=false) {
+
+    if(centre) {
+     translate([-w/2,-l/2,-h/2])
+        linear_extrude(height = h)
+        uk_rounded_rectangle(w,l,r);
+    } else {
+        linear_extrude(height = h)
+        uk_rounded_rectangle(w,l,r);
+    }
+}
+
+// return the inner rounding radius to use to keep a constant wall thickness
+function inner_rounding(outer_rounding, wall_thickness) =
+    outer_rounding - wall_thickness;
+
+    
+module cone(height,dia) {
+    rotate_extrude($fn=100)
+    polygon( points = [[0,0],[dia/2,0],[0,height]]);
+}
+
+// A quarter of a cone in the (+x, +y) quadrant
+module quarter_cone(height, dia) {
+
+    difference()
+    {
+        cone(height,dia);
+        translate([0, -dia, 0])
+        cube([2*dia,2*dia,2*height], true);
+        translate([-dia, 0, 0])
+        cube([2*dia,2*dia,2*height], true);
+    }
+}
 //speaker_grille_square(20,2);
 
 //rotate([0,0,-90])
@@ -149,3 +193,5 @@ module speaker_grille_square(speaker_dia, hole_thickness, LAYER_HEIGHT = 0.15) {
 //color("red")
 //translate([2,1,0])
 //cube([198,148,2]);
+
+quarter_cone(10,4);
